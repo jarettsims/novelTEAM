@@ -2,13 +2,43 @@
 <html>
   <head>
   	<meta charset="utf-8">
-    <title></title>
+    <title>Write Chapter</title>
+    <style>
+    	#title {
+    		min-width: 40%;
+    		margin-bottom: 30px;
+    	}
+    	#chapter_body {
+    		min-height: 300px;
+    		min-width: 70%;
+    		margin-bottom: 30px;
+    	}
+    </style>
   </head>
 
 	<body>
 		<header>
-			<h1>Write Chapter Page</h1>
+			<h1>Write Chapter {{chapnumber}} of {{name_of_novel}}</h1>
 		</header>
+		<section align="center">
+		<form method="POST" action="/novels/:novel_id/:chapter_number/write">
+			<input type="hidden" name="novelid" value={{novelid}}>
+			<input type="hidden" name="chapterid" value={{chapnumber}}>
+			<label for="title">Title:</label>
+			<br>
+			<input type="text" id="title" name="title">
+			<br>
+			<label for="chapter_body">Chapter Body:</label>
+			<br>
+			<textarea id="chapter_body" name="content"></textarea>
+			<br>
+			<label for="name">Name:</label>
+			<input type="text" id="name" name="name">
+			<label for="email">Email:</label>
+			<input type="text" id="email" name="email">
+			<button>Submit Chapter</button>
+		</form>
+		</section>
 		<footer>
 			<p>&copy 2014, Jarett Sims.</p>
 		</footer>

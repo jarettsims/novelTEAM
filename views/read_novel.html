@@ -8,12 +8,11 @@
 	<body>
 		<header>
 			<a href="/">NovelTEAM</a>
-		</header>
-		{{#book_title}}
-			<a href="/novels/{{id}}"><h1>{{name}}</h1></a>
-		{{/book_title}}
-
-		{{#chapter}}
+			{{#book_title}}
+				<a href="/novels/{{id}}"><h1>{{name}}</h1></a>
+			{{/book_title}}
+			</header>
+			{{#chapter}}
 
 			<h1> {{chapter_number}} | {{title}}</h1>
 			<p>{{content}}</p>

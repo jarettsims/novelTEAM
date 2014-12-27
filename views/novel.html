@@ -2,21 +2,44 @@
 <html>
   <head>
   	<meta charset="utf-8">
-    <title></title>
+    <title>NovelTEAM</title>
+    <style>
+    	li {
+    		list-style-type: none;
+    	}
+    </style>
   </head>
 
 	<body>
 		<header>
-			
+			<a href="/">NovelTEAM</a>
 		</header>
+
 		{{#novel}}
 			<h1>{{name}}</h1>
 			<ul>
 				<li><b>Synopsis:</b> {{synopsis}}</li>
 			</ul>
+			<hr>
+			<a href="/novels/{{novel_id}}/read"><p>Read Locked Chapters</p></a>
+			{{#locked_in_chapters}}
+			<ul>
+				<a href="/novels/{{novel_id}}/{{chapter_number}}/{{author_id}}/read"><li>Chapter {{chapter_number}}</a></li>
+				{{#username}}
+				<a href="/authors/{{id}}"><li>{{name}}</li></a>
+				{{/username}}
+			</ul> 
+			{{/locked_in_chapters}}
+			
+		<hr>
+			<a href="/novels/{{novel_id}}/{{next_chapter_number}}/write">
+				<button>Write Chapter {{next_chapter_number}}</button>
+			</a>
+
 		{{/novel}}
+
 		<footer>
-			<p>&copy 2014, Jarett Sims.</p>
+			<p>&copy 2015, NovelTEAM</p>
 		</footer>
 	</body>
 

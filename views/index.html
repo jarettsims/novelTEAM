@@ -2,13 +2,26 @@
 <html>
   <head>
   	<meta charset="utf-8">
-    <title></title>
+    <title>NovelTEAM</title>
+    <style>
+    	#novels {
+    		list-style-type: none;
+    	}
+    </style>
   </head>
 
 	<body>
 		<header>
-			<h1>Homepage</h1>
+			<h1>NovelTEAM</h1>
 		</header>
+		<a href="/signup">Signup</a>
+		<a href="/login">Login</a>
+		<hr>
+		{{#novels}}
+			<ul id="novels">
+				<a href="/novels/{{id}}"><li>{{name}}</li></a>
+			</ul>
+		{{/novels}}
 		<footer>
 			<p>&copy 2014, Jarett Sims.</p>
 		</footer>
