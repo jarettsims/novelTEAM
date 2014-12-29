@@ -14,10 +14,13 @@
 		<header>
 			<h1>NovelTEAM</h1>
 		</header>
-		<a href="/signup">Signup</a>
-		<a href="/login">Login</a>
+		<a href="/novels/create"><p>Create New Novel</p></a>
 		<hr>
-
+		{{#novels}}
+			<ul id="novels">
+				<a href="/novels/{{id}}"><li>{{name}}</li></a>
+			</ul>
+		{{/novels}}
 		<footer>
 			<p>&copy 2015, NovelTEAM</p>
 		</footer>

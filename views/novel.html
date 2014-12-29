@@ -12,7 +12,7 @@
 
 	<body>
 		<header>
-			<a href="/">NovelTEAM</a>
+			<a href="/welcome">NovelTEAM</a>
 		</header>
 
 		{{#novel}}
@@ -36,8 +36,11 @@
 				<button>Write Chapter {{next_chapter_number}}</button>
 			</a>
 
-		{{/novel}}
+		{{#currently_being_written}}
+			<a href="/novels/{{novel_id}}/{{chapter_number}}/{{author_id}}/read"><p>Chapter {{chapter_number}} | {{title}}</p></a>
+		{{/currently_being_written}}
 
+		{{/novel}}
 		<footer>
 			<p>&copy 2015, NovelTEAM</p>
 		</footer>

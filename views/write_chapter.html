@@ -18,30 +18,30 @@
 
 	<body>
 		<header>
-			<h1>Write Chapter {{chapnumber}} of {{name_of_novel}}</h1>
+			<a href="/welcome">NovelTEAM</a>
 		</header>
 		<section align="center">
-		<form method="POST" action="/novels/:novel_id/:chapter_number/write">
-			<input type="hidden" name="novelid" value={{novelid}}>
-			<input type="hidden" name="chapterid" value={{chapnumber}}>
-			<label for="title">Title:</label>
-			<br>
-			<input type="text" id="title" name="title">
-			<br>
-			<label for="chapter_body">Chapter Body:</label>
-			<br>
-			<textarea id="chapter_body" name="content"></textarea>
-			<br>
-			<label for="name">Name:</label>
-			<input type="text" id="name" name="name">
-			<label for="email">Email:</label>
-			<input type="text" id="email" name="email">
-			<button>Submit Chapter</button>
-		</form>
+			<h1>Write Chapter {{chapter_number}} of {{name_of_novel}}</h1>
+			<form method="POST" action="/novels/{{novel_id}}/{{chapter_number}}/write">
+				<label for="title">Title:</label>
+				<br>
+				<input type="text" id="title" name="title">
+				<br>
+				<label for="chapter_body">Chapter Body:</label>
+				<br>
+				<textarea id="chapter_body" name="content"></textarea>
+				<br>
+				<label for="name">Name:</label>
+				<input type="text" id="name" name="name">
+				<label for="email">Email:</label>
+				<input type="text" id="email" name="email">
+				<button>Submit Chapter</button>
+			</form>
+		
+			<footer>
+				<p>&copy 2015, NovelTEAM</p>
+			</footer>
 		</section>
-		<footer>
-			<p>&copy 2014, Jarett Sims.</p>
-		</footer>
 	</body>
 
 </html>
