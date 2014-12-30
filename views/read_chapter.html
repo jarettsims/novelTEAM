@@ -15,9 +15,13 @@
 
 		{{#chapter}}
 
-			<h1> {{chapter_number}} | {{title}}</h1>
+			<h1> {{chapter_number}} | {{title}}, by <a href="/authors/{{author_id}}">{{author}}</h1></a>
 			<p>{{content}}</p>
 
+			<form method="POST" action="/novels/{{novel_id}}/{{chapter_number}}/{{author_id}}/delete">
+				<input name="_method" type="hidden" value="DELETE"/>
+				<button>Delete Chapter</button>
+			</form>
 		{{/chapter}}
 
 		<footer>

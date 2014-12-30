@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<meta charset="utf-8">
+    <title>NovelTEAM</title>
+    <style>
+    	#title {
+    		min-width: 40%;
+    		margin-bottom: 30px;
+    	}
+    	#chapter_body {
+    		min-height: 300px;
+    		min-width: 70%;
+    		margin-bottom: 30px;
+    	}
+    </style>
+  </head>
+
+	<body>
+		<header>
+			<a href="/welcome">NovelTEAM</a>
+		</header>
+
+		<section align="center">
+			<h1>Edit Chapter {{chapter_number}} of {{name_of_novel}}</h1>
+			<form method="POST" action="/novels/{{novel_id}}/{{chapter_number}}/{{author_id}}/edit">
+				<input type="hidden" name="_method" value="put"/>
+				<label for="title">Title:</label>
+				<br>
+				<input type="text" id="title" name="new_title" value="{{existing_title}}">
+				<br>
+				<label for="chapter_body">Chapter Body:</label>
+				<br>
+				<textarea id="chapter_body" name="new_content">{{existing_content}}</textarea>
+				<br>
+<!-- 				<label for="name">Name:</label>
+				<input type="text" id="name" name="name">
+				<label for="email">Email:</label>
+				<input type="text" id="email" name="email"> -->
+				<button>Edit Chapter</button>
+			</form>
+	</body>
+
+	<footer>
+		<p>&copy 2015, NovelTEAM</p>
+	</footer>
+
+</html>

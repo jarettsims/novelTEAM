@@ -73,11 +73,17 @@ get '/novels/:novel_id' do
 	novel = Novel.find("#{params[:novel_id]}")
 	#get locked chapters
 	locked_in_chapters = Chapter.where(locked_in: true, novel_id: params[:novel_id]).to_a
+
+	read_locked = ""
+
 	if locked_in_chapters == []
 		last_locked_in_chapter = 0
+		read_locked = "Chapter 1 is yet to have been locked in"
 	else
 		last_locked_in_chapter = "#{locked_in_chapters.last.chapter_number}"
 	end
+	
+	# <a href="/novels/{{novel_id}}/read"><p>{{read_locked}}</p></a>
 
 	next_chapter = (last_locked_in_chapter.to_i + 1)
 
@@ -86,15 +92,11 @@ get '/novels/:novel_id' do
 
 	authors = []
 	locked_in_chapters.each do |chapter|
-		authors << Author.find(chapter[:author_id])
+		authors << Author.find(chapter[:author_id]).name
 	end
 
-	Mustache.render(File.read('./views/novel.html'), novel: novel, novel_id: params[:novel_id], locked_in_chapters: locked_in_chapters, next_chapter_number: next_chapter, currently_being_written: currently_being_written_chapters)
+	Mustache.render(File.read('./views/novel.html'), novel: novel, novel_id: params[:novel_id], locked_in_chapters: locked_in_chapters, next_chapter_number: next_chapter, currently_being_written: currently_being_written_chapters, username: authors)
 	
-	# username: authors
-
-	## get authors' usernames that correspond to the locked_in chapters' id and put each name into an array
-
 end
 
 ### READ CHAPTER OF A GIVEN NOVEL, WRITTEN BY A SPECIFIC AUTHOR ###
@@ -104,7 +106,12 @@ get '/novels/:novel_id/:chapter_number/:author_id/read' do
 	chapter = found_chapter.to_a[0]
 	# get book title
 	book_title = Novel.find("#{params[:novel_id]}")
-	Mustache.render(File.read('./views/read_chapter.html'), chapter: chapter, book_title: book_title)
+	#get author's name
+	author = Author.find(params[:author_id])
+	author_name = author.name
+	author_id = params[:author_id]
+
+	Mustache.render(File.read('./views/read_chapter.html'), chapter: chapter, book_title: book_title, author: author_name, author_id: author_id)
 end
 
 ### READ ALL LOCKED IN CHAPTERS OF A GIVEN NOVEL ###
@@ -135,16 +142,56 @@ post '/novels/:novel_id/:chapter_number/write' do
 
 	Chapter.create(chapter_number: params[:chapter_number], title: params[:title], author_id: author_id, novel_id: params[:novel_id], votes: 0, created_at: Time.now, content: params[:content])
 	### there needs to be a hard value in the redirect address, which is why interpolation is used here:
-	redirect '/novels/#{params[:novel_id]}'
+	redirect '/welcome'
 end
 
 ### AUTHOR'S PERSONAL PAGE ###
 get '/authors/:id' do
 	author = Author.find(params[:id])
+	novels_contributed_to = Chapter.where(author_id: author).to_a
+	novels_contributed_to.map {|x| x.novel_id}
+	# binding.pry
 	Mustache.render(File.read('./views/author.html'), author: author)
 end
 
-put '/novels/:novel_id/:chapter_number/edit' do
-	"you're on the edit page"
+### PAGE TO EDIT CHAPTER ###
+get '/novels/:novel_id/:chapter_number/:author_id/edit' do
+
+	novel_to_edit = Novel.find(params[:novel_id])
+	name_of_novel = novel_to_edit.name
+	
+	chapter_to_edit = Chapter.where(novel_id: params[:novel_id], chapter_number: params[:chapter_number], author_id: params[:author_id]).to_a[0]
+
+	existing_content = chapter_to_edit.content
+	existing_chapter_title = chapter_to_edit.title
+	
+	Mustache.render(File.read('./views/edit_chapter.html'), name_of_novel: name_of_novel, novel_id: params[:novel_id], chapter_number: params[:chapter_number], author_id: params[:author_id], existing_title: existing_chapter_title, existing_content: existing_content)
 end
 
+### SEND CHAPTER EDITS TO THE SERVER ###
+put '/novels/:novel_id/:chapter_number/:author_id/edit' do
+
+	chapter_being_edited = Chapter.where(novel_id: params[:novel_id], chapter_number: params[:chapter_number], author_id: params[:author_id]).to_a[0]
+
+	new_title = params[:new_title]
+	new_content = params[:new_content]
+
+	chapter_being_edited.title =  new_title
+	chapter_being_edited.content = new_content
+
+	chapter_being_edited.save
+
+	redirect '/welcome'
+	### why won't redirect to the dedicated novel page work?
+	# redirect '/novels/#{params[novel_id]}'
+end
+
+### DELETE A CHAPTER OF A GIVEN NOVEL FOR A SPECIFIC AUTHOR ###
+delete '/novels/:novel_id/:chapter_number/:author_id/delete' do
+
+	chapter = Chapter.where(novel_id: params[:novel_id], chapter_number: params[:chapter_number], author_id: params[:author_id]).to_a[0]
+
+	chapter.destroy
+
+	redirect '/welcome'
+end

@@ -21,12 +21,14 @@
 				<li><b>Synopsis:</b> {{synopsis}}</li>
 			</ul>
 			<hr>
-			<a href="/novels/{{novel_id}}/read"><p>Read Locked Chapters</p></a>
+			<a href='/novels/{{novel_id}}/read'><p>Read Locked Chapters</p></a>
+			{{read_locked}}
+			
 			{{#locked_in_chapters}}
 			<ul>
-				<a href="/novels/{{novel_id}}/{{chapter_number}}/{{author_id}}/read"><li>Chapter {{chapter_number}}</a></li>
+				<li><a href="/novels/{{novel_id}}/{{chapter_number}}/{{author_id}}/read">Chapter {{chapter_number}}</a></li>
 				{{#username}}
-				<a href="/authors/{{id}}"><li>{{name}}</li></a>
+				<li>by <a href="/authors/{{author_id}}">{{.}}</li></a>
 				{{/username}}
 			</ul> 
 			{{/locked_in_chapters}}

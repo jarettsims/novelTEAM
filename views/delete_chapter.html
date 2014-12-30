@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<meta charset="utf-8">
+    <title>NovelTEAM</title>
+    <style>
+    	#title {
+    		min-width: 40%;
+    		margin-bottom: 30px;
+    	}
+    	#chapter_body {
+    		min-height: 300px;
+    		min-width: 70%;
+    		margin-bottom: 30px;
+    	}
+    </style>
+  </head>
+
+	<body>
+		<header>
+			<a href="/welcome">NovelTEAM</a>
+		</header>
+
+		<section align="center">
+			<h1>Delete Chapter {{chapter_number}} of {{name_of_novel}}</h1>
+			<form method="DELETE" action="/novels/{{novel_id}}/{{chapter_number}}/{{author_id}}/delete">
+
+			{{#book_title}}
+				<a href="/novels/{{id}}"><h1>{{name}}</h1></a>
+			{{/book_title}}
+
+			{{#chapter}}
+
+				<h1> {{chapter_number}} | {{title}}, by <a href="/authors/{{author_id}}">{{author}}</h1></a>
+				<p>{{content}}</p>
+
+			{{/chapter}}
+<!-- 				<label for="name">Name:</label>
+				<input type="text" id="name" name="name">
+				<label for="email">Email:</label>
+				<input type="text" id="email" name="email"> -->
+				<button>Delete Chapter</button>
+			</form>
+	</body>
+
+	<footer>
+		<p>&copy 2015, NovelTEAM</p>
+	</footer>
+
+</html>
