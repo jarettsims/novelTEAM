@@ -15,7 +15,15 @@
 
 		{{#chapter}}
 
-			<h1> {{chapter_number}} | {{title}}, by <a href="/authors/{{author_id}}">{{author}}</h1></a>
+			<h1> {{chapter_number}} | {{title}}, by <a href="/authors/{{author_id}}">{{author}}</a>
+			<!-- UPVOTE CHAPTER -->
+			<form method="POST" action="/novels/{{novel_id}}/{{chapter_number}}/{{author_id}}/vote">
+				<button>Upvote</button>
+			</form>
+			<!--  -->
+
+			</h1>
+
 			<p>{{content}}</p>
 
 			<form method="POST" action="/novels/{{novel_id}}/{{chapter_number}}/{{author_id}}/delete">

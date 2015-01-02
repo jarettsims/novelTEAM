@@ -2,7 +2,8 @@ CREATE TABLE authors (
 	id serial primary key, 
 	name varchar(75), 
 	email varchar(75), 
-	vote_total integer
+	vote_total integer,
+	password_hash text
 );
 
 CREATE TABLE novels (
@@ -30,6 +31,13 @@ CREATE TABLE comments (
 	novel_id integer, 
 	chapter_id integer, 
 	content varchar(250)
+);
+
+CREATE TABLE votes (
+	id serial primary key,
+	author_id integer,
+	novel_id integer,
+	chapter_id integer
 );
 
 

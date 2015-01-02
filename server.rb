@@ -8,6 +8,10 @@ require './lib/author.rb'
 require './lib/novel.rb'
 require './lib/chapter.rb'
 require './lib/character'
+require './lib/vote.rb'
+require './helpers/give_token'
+
+enable :sessions
 
 ### HOME/ROOT ### (for users/visitors who have NOT signed in)
 get '/' do 
@@ -25,17 +29,27 @@ get '/sitemap' do
 	Mustache.render(File.read('./views/sitemap.html'))
 end
 
-## SIGNUP PAGE###
+### SIGNUP PAGE ###
 get '/signup' do
 	Mustache.render(File.read('./views/signup.html'))
 end
 
+### SEND SIGNUP DETAILS TO THE SERVER TO CREATE A NEW USER ###
 post '/signup' do
-	if Author.exists?(name: params[:name].downcase, email: params[:email].downcase)  
+	#using the bcrypt gem as per the instructions in the documentation
+	#REdefine the create method like you would the to_s method, making each author an instance of the author class
+	def create
+		@author = Author.new(params[:name])
+		@author.email = params[:email]
+		@author.password = params[:password]
+		@author.save!
+	end
+
+	if Author.exists?(name: params[:name].downcase, email: params[:email].downcase, password: params[:password])  
 		"user already exists"
 	else
-		Author.create(name: params[:name].downcase, email: params[:email].downcase)
-		"Thanks for signing up"
+		#call the new create method
+		Author.create(name: params[:name].downcase, email: params[:email].downcase, password: params[:password])
 		redirect '/login'
 	end 
 end
@@ -45,11 +59,14 @@ get '/login' do
 	Mustache.render(File.read('./views/login.html'))
 end
 
-post '/login' do
-	if Author.exists?(name: params[:name].downcase, email: params[:email].downcase)
-		author_id = Author.where(name: params[:name].downcase, email: params[:email].downcase).to_a[0].id  
-		"You are now signed in"
-		redirect '/'
+### AUTHENTICATE USER, GIVE TOKEN TO AUTHOR (START SESSION) IF PASSWORD MATCHES ENCRYPTED STORED PASSWORD ###
+post '/login' do	
+	@author = Author.find_by_email(params[:email])
+	if @author.password == params[:password]
+		#give_token is a helper method stored in the helpers dir
+		give_token
+		"You're logged in"
+		redirect '/welcome'
 	else
 		"Incorrect login credentials. Please try again, or signup to create a new account."
 		redirect '/login'
@@ -63,9 +80,11 @@ end
 
 ### SEND INFO ABOUT NEWLY CREATED NOVEL TO THE SERVER ###
 post '/novels/create' do
-	author_id = Author.where(name: params[:author_name], email: params[:author_email]).to_a[0][:id]
+	author_id = session[:author_id].to_a[0].id 
 	newly_creatd_novel = Novel.create(name: params[:novel_title], author_id: author_id, synopsis: params[:synopsis])
 	Character.create(novel_id: newly_creatd_novel.id, name: params[:character_name], age: params[:character_age], height: params[:character_height], hometown: params[:hometown], backstory: params[:backstory])
+	#should have it redirect to '/novels/:novel_id' but having trouble with interpolation in redirect same as with other similar desired redirects
+	redirect '/welcome'
 end
 
 ### DEDICATED NOVEL PAGE ###
@@ -96,22 +115,42 @@ get '/novels/:novel_id' do
 	end
 
 	Mustache.render(File.read('./views/novel.html'), novel: novel, novel_id: params[:novel_id], locked_in_chapters: locked_in_chapters, next_chapter_number: next_chapter, currently_being_written: currently_being_written_chapters, username: authors)
-	
 end
 
 ### READ CHAPTER OF A GIVEN NOVEL, WRITTEN BY A SPECIFIC AUTHOR ###
 get '/novels/:novel_id/:chapter_number/:author_id/read' do
-	found_chapter = Chapter.where(novel_id: "#{params[:novel_id]}", chapter_number: "#{params[:chapter_number]}", author_id: "#{params[:author_id]}")
+	found_chapter = Chapter.where(novel_id: params[:novel_id], chapter_number: params[:chapter_number], author_id: params[:author_id])
 	# turn chapter object to an array, then grab the specific instance so it can have getter/setter methods run on it 
 	chapter = found_chapter.to_a[0]
 	# get book title
-	book_title = Novel.find("#{params[:novel_id]}")
+	book_title = Novel.find(params[:novel_id])
 	#get author's name
 	author = Author.find(params[:author_id])
 	author_name = author.name
 	author_id = params[:author_id]
 
 	Mustache.render(File.read('./views/read_chapter.html'), chapter: chapter, book_title: book_title, author: author_name, author_id: author_id)
+end
+
+### VOTE ON A CHAPTER ###
+post '/novels/:novel_id/:chapter_number/:author_id/vote' do
+	logged_in_user_author_id = session[:author_id].to_a[0].id 
+	chapter = Chapter.where(novel_id: params[:novel_id], chapter_number: params[:chapter_number], author_id: params[:author_id]).to_a[0]
+	id_of_chapter_being_voted_on = chapter[:id]
+	binding.pry
+
+	#has the signed in user voted on the given chapter already?
+	unless Vote.exists?(author_id: logged_in_user_author_id, novel_id: params[:novel_id], chapter_id: id_of_chapter_being_voted_on)
+		#create a new vote
+		Vote.create(author_id: logged_in_user_author_id, novel_id: params[:novel_id], chapter_id: chapter_id) 
+		#add the vote to the chapter's vote total
+		chapter.votes += 1
+		chapter.save
+	end
+
+	redirect '/welcome'
+	## another case of redirect not working as intended:
+	# redirect '/novels/params[:novel_id]/params[:chapter_number]/params[:author_id]/read'
 end
 
 ### READ ALL LOCKED IN CHAPTERS OF A GIVEN NOVEL ###
@@ -138,7 +177,7 @@ post '/novels/:novel_id/:chapter_number/write' do
 	
 	# novel_id_as_integer = params[:novel_id].to_i 
 
-	author_id = Author.where(name: params[:name], email: params[:email]).to_a[0][:id]
+	author_id = session[:author_id].to_a[0].id 
 
 	Chapter.create(chapter_number: params[:chapter_number], title: params[:title], author_id: author_id, novel_id: params[:novel_id], votes: 0, created_at: Time.now, content: params[:content])
 	### there needs to be a hard value in the redirect address, which is why interpolation is used here:

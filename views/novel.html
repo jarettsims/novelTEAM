@@ -7,6 +7,9 @@
     	li {
     		list-style-type: none;
     	}
+    	.upvote {
+    		float:left;
+    	}
     </style>
   </head>
 
@@ -38,14 +41,27 @@
 				<button>Write Chapter {{next_chapter_number}}</button>
 			</a>
 
+		<section class="currently_being_written">
 		{{#currently_being_written}}
-			<a href="/novels/{{novel_id}}/{{chapter_number}}/{{author_id}}/read"><p>Chapter {{chapter_number}} | {{title}}</p></a>
+			<div class="upvote">
+				<a href="#" class="upvote-link"></a>
+   				 <span class="vote-count">up {{votes}} </span>
+			</div>
+			<p class="current-chapter-details" data-chapter-id="{{id}}">
+				<a href="/novels/{{novel_id}}/{{chapter_number}}/{{author_id}}/read">Chapter {{chapter_number}} | {{title}}</a>
+			</p>
 		{{/currently_being_written}}
+		</section>
 
 		{{/novel}}
+
 		<footer>
 			<p>&copy 2015, NovelTEAM</p>
 		</footer>
 	</body>
 
 </html>
+<div class="upvote" >
+    
+</div>
+
