@@ -4,5 +4,5 @@ def give_token
 end
 
 def logged_in?
-	session[:name] ? true : false	
+	session[:author] ? true : false	
 end

@@ -2,24 +2,92 @@
 <html>
   <head>
   	<meta charset="utf-8">
+  	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
     <title>NovelTEAM</title>
     <style>
-    	#novels {
-    		list-style-type: none;
+    	.jumbotron {
+    		text-align: center;
     	}
+    	.navbar {
+    		margin-bottom: 0px;
+    	}
+    	#gifs {
+    		margin-left: 10%;
+    	}
+    	.gif {
+    		display: inline-block;
+    		margin-left: 20px;
+    		height: 279px;
+    		width: 40%;
+    		color: #fe0b65;
+    		text-align: center;
+    		text-shadow: 2px 2px #032765; 
+    	}
+    	#caan {
+    		background-image: url("https://burgesstaylor7911.files.wordpress.com/2014/09/misery-hard-day-fuck-gif.gif");
+    	}
+    	#carrey {
+    		background-image: url("http://24.media.tumblr.com/tumblr_m9010sXDqf1qdhag9o1_500.gif");
+    		max-height: 279px; 
+    	}
+
     </style>
   </head>
 
 	<body>
 		<header>
-			<h1>NovelTEAM</h1>
+			<nav class="navbar navbar-default">
+			  <div class="container-fluid">
+			    <!-- Brand and toggle get grouped for better mobile display -->
+			    <div class="navbar-header">
+			      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+			        <span class="sr-only">Toggle navigation</span>
+			        <span class="icon-bar"></span>
+			        <span class="icon-bar"></span>
+			        <span class="icon-bar"></span>
+			      </button>
+			      <a class="navbar-brand" href="#">NovelTEAM</a>
+			    </div>
+
+			    <!-- Collect the nav links, forms, and other content for toggling -->
+			    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			   
+			      <ul class="nav navbar-nav navbar-right">
+			        <li><a href="/login">Login</a></li>
+			      </ul>
+			    </div><!-- /.navbar-collapse -->
+			  </div><!-- /.container-fluid -->
+			</nav>
+
+			<div class="jumbotron">
+			  <h1>NovelTEAM</h1>
+			  <p>Collaborative writing software that produces results.</p>
+			  <p><a class="btn btn-primary btn-lg" href="/signup" role="button">Become a TEAM Player</a></p>
+			</div>
 		</header>
-		<a href="/signup">Signup</a>
-		<a href="/login">Login</a>
+
+		<div id="gifs">
+			<div class="gif" id="caan">
+				<h3>Writer without NovelTEAM</h3>
+			</div>
+			<div class="gif" id="carrey">
+				<h3><em>You</em> <b>with</b> NovelTEAM</h3>
+			</div>
+			<!-- <div class="gif-block">
+				<h3>Writer without NovelTEAM</h3>
+				<img src="https://burgesstaylor7911.files.wordpress.com/2014/09/misery-hard-day-fuck-gif.gif" id="james-caan">
+			</div>
+			<div class="gif-block">
+				<h3><em>You</em> <b>with</b> NovelTEAM</h3>
+				<img src="http://24.media.tumblr.com/tumblr_m9010sXDqf1qdhag9o1_500.gif" id="jim-carrey">
+			</div> -->
+			
+		</div>
+		
 		<hr>
 
-		<footer>
-			<p>&copy 2015, NovelTEAM</p>
+		<footer style="float:left">
+			<p class="container">&copy 2015, NovelTEAM</p>
 		</footer>
 	</body>
 

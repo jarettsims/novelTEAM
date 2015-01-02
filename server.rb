@@ -20,13 +20,10 @@ end
 
 ### WELCOME ### (for users who have signed in)
 get '/welcome' do
+	logged_in_users_name = session[:author_id].to_a[0].name
+	logged_in_users_author_id = session[:author_id].to_a[0].id
 	novels = Novel.all.to_a
-	Mustache.render(File.read('./views/welcome.html'), novels: novels)
-end
-
-### SITEMAP ###
-get '/sitemap' do
-	Mustache.render(File.read('./views/sitemap.html'))
+	Mustache.render(File.read('./views/welcome.html'), novels: novels, logged_in_user: logged_in_users_name, author_id: logged_in_users_author_id)
 end
 
 ### SIGNUP PAGE ###
@@ -45,7 +42,7 @@ post '/signup' do
 		@author.save!
 	end
 
-	if Author.exists?(name: params[:name].downcase, email: params[:email].downcase, password: params[:password])  
+	if Author.exists?(name: params[:name].downcase, email: params[:email].downcase, password_hash: params[:password])  
 		"user already exists"
 	else
 		#call the new create method
@@ -71,6 +68,11 @@ post '/login' do
 		"Incorrect login credentials. Please try again, or signup to create a new account."
 		redirect '/login'
 	end
+end
+
+get '/logout' do
+	session.clear
+	redirect '/'
 end
 
 ### CREATE NEW NOVEL PAGE ###
@@ -119,9 +121,7 @@ end
 
 ### READ CHAPTER OF A GIVEN NOVEL, WRITTEN BY A SPECIFIC AUTHOR ###
 get '/novels/:novel_id/:chapter_number/:author_id/read' do
-	found_chapter = Chapter.where(novel_id: params[:novel_id], chapter_number: params[:chapter_number], author_id: params[:author_id])
-	# turn chapter object to an array, then grab the specific instance so it can have getter/setter methods run on it 
-	chapter = found_chapter.to_a[0]
+	chapter = Chapter.where(novel_id: params[:novel_id], chapter_number: params[:chapter_number], author_id: params[:author_id]).to_a[0]
 	# get book title
 	book_title = Novel.find(params[:novel_id])
 	#get author's name
@@ -137,12 +137,11 @@ post '/novels/:novel_id/:chapter_number/:author_id/vote' do
 	logged_in_user_author_id = session[:author_id].to_a[0].id 
 	chapter = Chapter.where(novel_id: params[:novel_id], chapter_number: params[:chapter_number], author_id: params[:author_id]).to_a[0]
 	id_of_chapter_being_voted_on = chapter[:id]
-	binding.pry
 
 	#has the signed in user voted on the given chapter already?
 	unless Vote.exists?(author_id: logged_in_user_author_id, novel_id: params[:novel_id], chapter_id: id_of_chapter_being_voted_on)
 		#create a new vote
-		Vote.create(author_id: logged_in_user_author_id, novel_id: params[:novel_id], chapter_id: chapter_id) 
+		Vote.create(author_id: logged_in_user_author_id, novel_id: params[:novel_id], chapter_id: id_of_chapter_being_voted_on) 
 		#add the vote to the chapter's vote total
 		chapter.votes += 1
 		chapter.save

@@ -3,26 +3,75 @@
   <head>
   	<meta charset="utf-8">
     <title>NovelTEAM</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
     <style>
     	#novels {
     		list-style-type: none;
+    		margin-left: -38px;
+    	}
+    	.jumbotron {
+    		text-align: center;
+    	}
+/*    	.signed-in-jumbotron {
+    		background-image: url("http://img.pandawhale.com/70513-Jim-Carrey-typing-gif-Imgur-IPKZ.gif");
+    		background-repeat: repeat-x;
+    	}*/
+    	.navbar {
+    		margin-bottom: 0px;
     	}
     </style>
   </head>
 
 	<body>
 		<header>
-			<h1>NovelTEAM</h1>
+			<nav class="navbar navbar-default">
+			  <div class="container-fluid">
+			    <!-- Brand and toggle get grouped for better mobile display -->
+			    <div class="navbar-header">
+			      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+			        <span class="sr-only">Toggle navigation</span>
+			        <span class="icon-bar"></span>
+			        <span class="icon-bar"></span>
+			        <span class="icon-bar"></span>
+			      </button>
+			      <a class="navbar-brand" href="#">NovelTEAM</a>
+			    </div>
+
+			    <!-- Collect the nav links, forms, and other content for toggling -->
+			    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			   
+			      <ul class="nav navbar-nav navbar-right">
+			        <li><a href="/novels/create">Create New Novel</a></li>
+			        <li><a href="/authors/{{author_id}}">My work</a></li>
+			        <li><a href="/logout">Logout</a></li>
+			      </ul>
+			    </div><!-- /.navbar-collapse -->
+			  </div><!-- /.container-fluid -->
+			</nav>
+
+			<div class="jumbotron signed-in-jumbotron">
+			  <h1>Welcome {{logged_in_user}}!</h1>
+			  <h4>Get busy reading & voting</h4>
+			  <h6>(there are chapters and novels galore)</h6>
+			  <h4>Get busy writing</h4>
+			  <h6>(collaborate on a novel or start your own)</h6>
+			  <h4>... Or prepare for war pilgrim</h4>
+			</div>
 		</header>
-		<a href="/novels/create"><p>Create New Novel</p></a>
+
+		<section class="container">
+			<h3>Novels Currently Being Written:</h3>
+			{{#novels}}
+				<ul id="novels">
+					<li><a href="/novels/{{id}}">{{name}}</a></li>
+				</ul>
+			{{/novels}}
+		</section>
+
 		<hr>
-		{{#novels}}
-			<ul id="novels">
-				<a href="/novels/{{id}}"><li>{{name}}</li></a>
-			</ul>
-		{{/novels}}
+
 		<footer>
-			<p>&copy 2015, NovelTEAM</p>
+			<p class="container">&copy 2015, NovelTEAM</p>
 		</footer>
 	</body>
 

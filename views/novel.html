@@ -2,33 +2,84 @@
 <html>
   <head>
   	<meta charset="utf-8">
+  	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
     <title>NovelTEAM</title>
     <style>
-    	li {
+    	.jumbotron {
+    		text-align: center;
+    		background: transparent url("http://ecx.images-amazon.com/images/I/91mRbaBaGML._SL1500_.jpg") top left no-repeat;
+    		background-size: 100%;
+     	}
+    	@media (min-width: 900px) {
+    		.jumbotron {
+    			min-height: 400px;
+    			background-size: 100% 500px;
+    		}
+    	}
+    	.navbar {
+    		margin-bottom: 0px;
+    	}
+    	h1.novel-title {
+    		color: #fff;
+    	}
+    	.chapter-info-list {
     		list-style-type: none;
+    		margin-left: -40px;
     	}
     	.upvote {
     		float:left;
+    	}
+    	.current-chapter-details {
+    		margin-left: 5em;
     	}
     </style>
   </head>
 
 	<body>
+		{{#novel}}
 		<header>
-			<a href="/welcome">NovelTEAM</a>
+			<nav class="navbar navbar-default">
+			  <div class="container-fluid">
+			    <!-- Brand and toggle get grouped for better mobile display -->
+			    <div class="navbar-header">
+			      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+			        <span class="sr-only">Toggle navigation</span>
+			        <span class="icon-bar"></span>
+			        <span class="icon-bar"></span>
+			        <span class="icon-bar"></span>
+			      </button>
+			      <a class="navbar-brand" href="/welcome">NovelTEAM</a>
+			    </div>
+
+			    <!-- Collect the nav links, forms, and other content for toggling -->
+			    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			   
+			      <ul class="nav navbar-nav navbar-right">
+			        <li><a href="/novels/create">Create New Novel</a></li>
+			        <li><a href="/authors/{{author_id}}">My work</a></li>
+			        <li><a href="/logout">Logout</a></li>
+			      </ul>
+			    </div><!-- /.navbar-collapse -->
+			  </div><!-- /.container-fluid -->
+			</nav>
+
+			<div class="jumbotron">
+			  <h1 class="novel-title">{{name}}</h1>
+			  <a href="/novels/{{novel_id}}/read"><button class="btn btn-primary btn-sm">Read Locked Chapters</button></a>
+			</div>
 		</header>
 
-		{{#novel}}
-			<h1>{{name}}</h1>
-			<ul>
+	<div class="container">
+			<ul class="chapter-info-list">
 				<li><b>Synopsis:</b> {{synopsis}}</li>
+				<!-- <li>Characters</li> -->
 			</ul>
+
 			<hr>
-			<a href='/novels/{{novel_id}}/read'><p>Read Locked Chapters</p></a>
-			{{read_locked}}
 			
 			{{#locked_in_chapters}}
-			<ul>
+			<ul class="chapter-info-list">
+				<h4>Locked in Chapters:</h4>
 				<li><a href="/novels/{{novel_id}}/{{chapter_number}}/{{author_id}}/read">Chapter {{chapter_number}}</a></li>
 				{{#username}}
 				<li>by <a href="/authors/{{author_id}}">{{.}}</li></a>
@@ -37,31 +88,37 @@
 			{{/locked_in_chapters}}
 			
 		<hr>
-			<a href="/novels/{{novel_id}}/{{next_chapter_number}}/write">
-				<button>Write Chapter {{next_chapter_number}}</button>
-			</a>
+
+		<section>
+			<h4>In Progress: Chapter {{next_chapter_number}}
+				<a href="/novels/{{novel_id}}/{{next_chapter_number}}/write">
+					<button type="button" class="btn btn-primary">Write</button>
+				</a>
+			</h4>
+		</section>
 
 		<section class="currently_being_written">
 		{{#currently_being_written}}
 			<div class="upvote">
 				<a href="#" class="upvote-link"></a>
-   				 <span class="vote-count">up {{votes}} </span>
+					Votes <span class="badge">{{votes}}</span>
+   				 <!-- <span class="vote-count">Votes: {{votes}}:</span> -->
 			</div>
 			<p class="current-chapter-details" data-chapter-id="{{id}}">
-				<a href="/novels/{{novel_id}}/{{chapter_number}}/{{author_id}}/read">Chapter {{chapter_number}} | {{title}}</a>
+				<a href="/novels/{{novel_id}}/{{chapter_number}}/{{author_id}}/read"> Chapter {{chapter_number}} | {{title}}</a>
 			</p>
 		{{/currently_being_written}}
 		</section>
 
 		{{/novel}}
-
+		<br><br>
 		<footer>
 			<p>&copy 2015, NovelTEAM</p>
 		</footer>
+	</div>
+
 	</body>
 
 </html>
-<div class="upvote" >
-    
-</div>
+
 
