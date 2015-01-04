@@ -4,10 +4,13 @@
   	<meta charset="utf-8">
   	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
     <title>NovelTEAM</title>
+
+    {{#novel}}
+
     <style>
     	.jumbotron {
     		text-align: center;
-    		background: transparent url("http://ecx.images-amazon.com/images/I/91mRbaBaGML._SL1500_.jpg") top left no-repeat;
+    		background: transparent url({{novel_img}}) top left no-repeat;
     		background-size: 100%;
      	}
     	@media (min-width: 900px) {
@@ -15,8 +18,16 @@
     			min-height: 400px;
     			background-size: 100% 500px;
     		}
+    		.novel-options-block {
+    		margin-top: 10em;
+    		color: white;
+    		font-size: 1.2em;
+    		text-shadow: 1px 1px rgba(200, 200, 200, 0.83);
+    		text-decoration: none;
+	    	}
     	}
     	.navbar {
+    		/*position: fixed;*/
     		margin-bottom: 0px;
     	}
     	h1.novel-title {
@@ -36,7 +47,6 @@
   </head>
 
 	<body>
-		{{#novel}}
 		<header>
 			<nav class="navbar navbar-default">
 			  <div class="container-fluid">
@@ -48,7 +58,7 @@
 			        <span class="icon-bar"></span>
 			        <span class="icon-bar"></span>
 			      </button>
-			      <a class="navbar-brand" href="/welcome">NovelTEAM</a>
+			      <a class="navbar-brand" href="/">NovelTEAM</a>
 			    </div>
 
 			    <!-- Collect the nav links, forms, and other content for toggling -->
@@ -56,7 +66,7 @@
 			   
 			      <ul class="nav navbar-nav navbar-right">
 			        <li><a href="/novels/create">Create New Novel</a></li>
-			        <li><a href="/authors/{{author_id}}">My work</a></li>
+			        <li><a href="/authors/{{logged_in_user_id}}">My Profile</a></li>
 			        <li><a href="/logout">Logout</a></li>
 			      </ul>
 			    </div><!-- /.navbar-collapse -->
@@ -65,7 +75,26 @@
 
 			<div class="jumbotron">
 			  <h1 class="novel-title">{{name}}</h1>
-			  <a href="/novels/{{novel_id}}/read"><button class="btn btn-primary btn-sm">Read Locked Chapters</button></a>
+			  <h4 style="color:white">Created by <a href="/authors/{{id_of_author_who_created_novel}}">{{name_of_author_who_created_novel}}</a></h4>
+			  <!-- <a href="/novels/{{novel_id}}/read"><button class="btn btn-primary btn-sm">Read Locked Chapters</button></a> -->
+			  <br>
+			  <div class="novel-options-block">
+				  <a href="/novels/{{novel_id}}/read">
+				  	<button type="button" class="btn btn-primary btn-sm">
+				  		<span class="glyphicon glyphicon-eye-open" aria-hidden="true"> Read</span>
+			  		</button>
+		  		</a>
+		  		<a href="#">
+				  	<button type="button" class="btn btn-primary btn-sm">
+				  		<span class="glyphicon glyphicon-road" aria-hidden="true"> Follow</span>
+			  		</button>
+		  		</a>
+		  		<a href="#">
+				  	<button type="button" class="btn btn-primary btn-sm">
+				  		<span class="glyphicon glyphicon-list-alt" aria-hidden="true"> Synopsis</span>
+			  		</button>
+		  		</a>
+				</div>
 			</div>
 		</header>
 
@@ -77,24 +106,28 @@
 
 			<hr>
 			
-			{{#locked_in_chapters}}
-			<ul class="chapter-info-list">
+
+			<!-- <ul class="chapter-info-list">
 				<h4>Locked in Chapters:</h4>
-				<li><a href="/novels/{{novel_id}}/{{chapter_number}}/{{author_id}}/read">Chapter {{chapter_number}}</a></li>
+			{{#locked_in_chapters}}
 				{{#username}}
-				<li>by <a href="/authors/{{author_id}}">{{.}}</li></a>
+				<li style="list-style-type:none">
+					<a href="/novels/{{novel_id}}/{{chapter_number}}/{{author_id}}/read">Chapter {{chapter_number}} | {{title}} | </a> by <a href="/authors/{{author_id}}">{{.}}</a>
+				</li>
 				{{/username}}
 			</ul> 
-			{{/locked_in_chapters}}
-			
+			{{/locked_in_chapters}} 
 		<hr>
+		-->
 
 		<section>
-			<h4>In Progress: Chapter {{next_chapter_number}}
+			<p>In Progress: Chapter {{next_chapter_number}} &nbsp;
 				<a href="/novels/{{novel_id}}/{{next_chapter_number}}/write">
-					<button type="button" class="btn btn-primary">Write</button>
-				</a>
-			</h4>
+					<button type="button" class="btn btn-primary btn-sm">
+					  	<span class="glyphicon glyphicon-pencil" aria-hidden="true"> Write</span>
+				  </button>
+			  </a>
+			</p>
 		</section>
 
 		<section class="currently_being_written">
@@ -111,7 +144,9 @@
 		</section>
 
 		{{/novel}}
+
 		<br><br>
+
 		<footer>
 			<p>&copy 2015, NovelTEAM</p>
 		</footer>

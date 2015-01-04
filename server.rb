@@ -15,7 +15,28 @@ enable :sessions
 
 ### HOME/ROOT ### (for users/visitors who have NOT signed in)
 get '/' do 
-	Mustache.render(File.read('./views/index.html'))
+	
+	welcome = ""
+	in_or_out_text = ""
+	in_or_out_path = ""
+	signup_or_welcome_path = ""
+	signup_or_welcome_text = ""
+
+	if logged_in?
+		welcome = "/welcome"
+		in_or_out_text = "Logout"
+		in_or_out_path = "logout"
+		signup_or_welcome_path = "welcome"
+		signup_or_welcome_text = "Enter Site"
+	else
+		welcome = "#"
+		in_or_out_text = "Login"
+		in_or_out_path = "login"
+		signup_or_welcome_path = "signup"
+		signup_or_welcome_text = "Signup & Become a TEAM Player"
+	end
+
+	Mustache.render(File.read('./views/index.html'), welcome: welcome, in_or_out_text: in_or_out_text, in_or_out_path: in_or_out_path, signup_or_welcome_text: signup_or_welcome_text, signup_or_welcome_path: signup_or_welcome_path)
 end
 
 ### WELCOME ### (for users who have signed in)
@@ -23,6 +44,7 @@ get '/welcome' do
 	logged_in_users_name = session[:author_id].to_a[0].name
 	logged_in_users_author_id = session[:author_id].to_a[0].id
 	novels = Novel.all.to_a
+
 	Mustache.render(File.read('./views/welcome.html'), novels: novels, logged_in_user: logged_in_users_name, author_id: logged_in_users_author_id)
 end
 
@@ -47,7 +69,11 @@ post '/signup' do
 	else
 		#call the new create method
 		Author.create(name: params[:name].downcase, email: params[:email].downcase, password: params[:password])
-		redirect '/login'
+		session[:author] = params[:name] 
+		# binding.pry
+		session[:author_id] = Author.where(name: session[:author])
+
+		redirect '/welcome'
 	end 
 end
 
@@ -82,8 +108,15 @@ end
 
 ### SEND INFO ABOUT NEWLY CREATED NOVEL TO THE SERVER ###
 post '/novels/create' do
-	author_id = session[:author_id].to_a[0].id 
-	newly_creatd_novel = Novel.create(name: params[:novel_title], author_id: author_id, synopsis: params[:synopsis])
+	author_id = session[:author_id].to_a[0].id
+	
+	cover_url = ""
+	if params[:cover_url] == ""
+		cover_url = nil
+	else
+		cover_url = params[:cover_url]
+	end
+	newly_creatd_novel = Novel.create(name: params[:novel_title], author_id: author_id, synopsis: params[:synopsis], cover_url: cover_url)
 	Character.create(novel_id: newly_creatd_novel.id, name: params[:character_name], age: params[:character_age], height: params[:character_height], hometown: params[:hometown], backstory: params[:backstory])
 	#should have it redirect to '/novels/:novel_id' but having trouble with interpolation in redirect same as with other similar desired redirects
 	redirect '/welcome'
@@ -91,10 +124,13 @@ end
 
 ### DEDICATED NOVEL PAGE ###
 get '/novels/:novel_id' do
-	novel = Novel.find("#{params[:novel_id]}")
+	novel = Novel.find(params[:novel_id])
+	author_who_created_novel = Author.where(id: novel.author_id).to_a[0]
+	name_of_author_who_created_novel = author_who_created_novel.name
+	id_of_author_who_created_novel = author_who_created_novel.id
+
 	#get locked chapters
 	locked_in_chapters = Chapter.where(locked_in: true, novel_id: params[:novel_id]).to_a
-
 	read_locked = ""
 
 	if locked_in_chapters == []
@@ -104,19 +140,21 @@ get '/novels/:novel_id' do
 		last_locked_in_chapter = "#{locked_in_chapters.last.chapter_number}"
 	end
 	
-	# <a href="/novels/{{novel_id}}/read"><p>{{read_locked}}</p></a>
-
 	next_chapter = (last_locked_in_chapter.to_i + 1)
 
 	#show chapters being written
 	currently_being_written_chapters = Chapter.where(novel_id: params[:novel_id], chapter_number: next_chapter).to_a
 
-	authors = []
-	locked_in_chapters.each do |chapter|
-		authors << Author.find(chapter[:author_id]).name
+	authors = locked_in_chapters.map { |chapter| Author.find(chapter[:author_id]).name}
+	novel_img = "placeholder"
+	# binding.pry
+	if novel.cover_url == nil
+		novel_img = "http://i211.photobucket.com/albums/bb117/Archeaglefly/curtains-closed-1.jpg"
+	else
+		novel_img = novel.cover_url
 	end
 
-	Mustache.render(File.read('./views/novel.html'), novel: novel, novel_id: params[:novel_id], locked_in_chapters: locked_in_chapters, next_chapter_number: next_chapter, currently_being_written: currently_being_written_chapters, username: authors)
+	Mustache.render(File.read('./views/novel.html'), novel: novel, novel_id: params[:novel_id], logged_in_user_id: session[:author_id].to_a[0].id, locked_in_chapters: locked_in_chapters, next_chapter_number: next_chapter, currently_being_written: currently_being_written_chapters, username: authors, novel_img: novel_img, name_of_author_who_created_novel: name_of_author_who_created_novel, id_of_author_who_created_novel: id_of_author_who_created_novel)
 end
 
 ### READ CHAPTER OF A GIVEN NOVEL, WRITTEN BY A SPECIFIC AUTHOR ###
@@ -154,12 +192,17 @@ end
 
 ### READ ALL LOCKED IN CHAPTERS OF A GIVEN NOVEL ###
 get '/novels/:novel_id/read' do
-	book_title = Novel.find("#{params[:novel_id]}")
+	book_title = Novel.find(params[:novel_id])
 
-	queried_novel = Chapter.where(novel_id: "#{params[:novel_id]}", locked_in: true)
-	chapters = queried_novel.to_a.sort
-
-	Mustache.render(File.read('./views/read_novel.html'), book_title: book_title, chapter: chapters)
+	novel = Chapter.where(novel_id: params[:novel_id], locked_in: true)
+	chapters = novel.to_a.sort
+	# authors_of_locked_chapters = chapters.map { |x| Author.find(x.author_id).name}
+	author = ""
+	chapters.each do |chapter|
+		author = Author.find(chapter.author_id).name
+	end
+	
+	Mustache.render(File.read('./views/read_novel.html'), book_title: book_title, chapter: chapters, author: author)
 end
 
 ### PAGE TO WRITE A SPECIFIC CHAPTER NUMBER FOR A SPECIFIED NOVEL ###
