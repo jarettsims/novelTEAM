@@ -3,6 +3,7 @@ require 'pry'
 require 'active_record'
 require 'mustache'
 require 'pg'
+require 'twilio-ruby'
 require './lib/connection.rb'
 require './lib/author.rb'
 require './lib/novel.rb'
@@ -103,7 +104,8 @@ end
 
 ### CREATE NEW NOVEL PAGE ###
 get '/novels/create' do
-	Mustache.render(File.read('./views/create_novel.html'))
+	logged_in_user_id = session[:author_id].to_a[0].id
+	Mustache.render(File.read('./views/create_novel.html'), logged_in_user_id: logged_in_user_id)
 end
 
 ### SEND INFO ABOUT NEWLY CREATED NOVEL TO THE SERVER ###
@@ -154,11 +156,13 @@ get '/novels/:novel_id' do
 		novel_img = novel.cover_url
 	end
 
+	# Mustache.render(File.read('./public/stylesheets/main.css'), novel_img: novel_img)
 	Mustache.render(File.read('./views/novel.html'), novel: novel, novel_id: params[:novel_id], logged_in_user_id: session[:author_id].to_a[0].id, locked_in_chapters: locked_in_chapters, next_chapter_number: next_chapter, currently_being_written: currently_being_written_chapters, username: authors, novel_img: novel_img, name_of_author_who_created_novel: name_of_author_who_created_novel, id_of_author_who_created_novel: id_of_author_who_created_novel)
 end
 
 ### READ CHAPTER OF A GIVEN NOVEL, WRITTEN BY A SPECIFIC AUTHOR ###
 get '/novels/:novel_id/:chapter_number/:author_id/read' do
+	logged_in_user_id = session[:author_id].to_a[0].id
 	chapter = Chapter.where(novel_id: params[:novel_id], chapter_number: params[:chapter_number], author_id: params[:author_id]).to_a[0]
 	# get book title
 	book_title = Novel.find(params[:novel_id])
@@ -166,8 +170,8 @@ get '/novels/:novel_id/:chapter_number/:author_id/read' do
 	author = Author.find(params[:author_id])
 	author_name = author.name
 	author_id = params[:author_id]
-
-	Mustache.render(File.read('./views/read_chapter.html'), chapter: chapter, book_title: book_title, author: author_name, author_id: author_id)
+	
+	Mustache.render(File.read('./views/read_chapter.html'), novel_id: params[:novel_id], chapter: chapter, book_title: book_title, author: author_name, author_id: author_id, logged_in_user_id: logged_in_user_id)
 end
 
 ### VOTE ON A CHAPTER ###
@@ -184,10 +188,10 @@ post '/novels/:novel_id/:chapter_number/:author_id/vote' do
 		chapter.votes += 1
 		chapter.save
 	end
-
-	redirect '/welcome'
+	# redirect '/welcome'
 	## another case of redirect not working as intended:
-	# redirect '/novels/params[:novel_id]/params[:chapter_number]/params[:author_id]/read'
+	# binding.pry
+	redirect "/novels/#{params[:novel_id]}/#{params[:chapter_number]}/#{params[:author_id]}/read"
 end
 
 ### READ ALL LOCKED IN CHAPTERS OF A GIVEN NOVEL ###
@@ -231,8 +235,8 @@ get '/authors/:id' do
 	author = Author.find(params[:id])
 	novels_contributed_to = Chapter.where(author_id: author).to_a
 	novels_contributed_to.map {|x| x.novel_id}
-	# binding.pry
-	Mustache.render(File.read('./views/author.html'), author: author)
+	logged_in_user_id = session[:author_id].to_a[0].id
+	Mustache.render(File.read('./views/author.html'), author: author, logged_in_user_id: logged_in_user_id)
 end
 
 ### PAGE TO EDIT CHAPTER ###

@@ -3,35 +3,61 @@
   <head>
   	<meta charset="utf-8">
     <title>NovelTEAM</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href=".../../stylesheets/main.css">
   </head>
 
 	<body>
 		<header>
-			<a href="/welcome">NovelTEAM</a>
+			<nav class="navbar navbar-default">
+			  <div class="container-fluid">
+			    <!-- Brand and toggle get grouped for better mobile display -->
+			    <div class="navbar-header">
+			      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+			        <span class="sr-only">Toggle navigation</span>
+			        <span class="icon-bar"></span>
+			        <span class="icon-bar"></span>
+			        <span class="icon-bar"></span>
+			      </button>
+			      <a class="navbar-brand" href="/">NovelTEAM</a>
+			    </div>
+
+			    <!-- Collect the nav links, forms, and other content for toggling -->
+			    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			   
+			      <ul class="nav navbar-nav navbar-right">
+			        <li><a href="/novels/create">Create New Novel</a></li>
+			        <li><a href="/authors/{{logged_in_user_id}}">My Profile</a></li>
+			        <li><a href="/logout">Logout</a></li>
+			      </ul>
+			    </div><!-- /.navbar-collapse -->
+			  </div><!-- /.container-fluid -->
+			</nav>
 		</header>
 
-		{{#author}}
-			<h1>{{name}}'s Page</h1>
-		{{/author}}
-		<h3>Votes Reiceived:</h3>
-		<h3>Novels Created:</h3>
-		<h3>Novels Contributed To:</h3>
-		<ul>
-			<li>Novel Name</li>
+		<div class="container">
+			{{#author}}
+				<h1>{{name}}'s Page</h1>
+			{{/author}}
+			<h3>Votes Reiceived:</h3>
+			<h3>Novels Created:</h3>
+			<h3>Novels Contributed To:</h3>
 			<ul>
-				<li>Chapter Written</li>
+				<li>Novel Name</li>
+				<ul>
+					<li>Chapter Written</li>
+				</ul>
 			</ul>
-		</ul>
+				
 			
-		
-		{{#novels}}
-		<ul>
-			<li>yada</li>
-		</ul>
-		{{/novels}}
+			{{#novels}}
+			<ul>
+				<li>yada</li>
+			</ul>
+			{{/novels}}
 	</body>
 	<footer>
 		<p>&copy 2015, NovelTEAM</p>
 	</footer>
-
+	</div>
 </html>

@@ -1,0 +1,44 @@
+.jumbotron {
+	text-align: center;
+	background: transparent url({{novel_img}}) top left no-repeat;
+	background-size: 100%;
+	}
+@media (min-width: 900px) {
+	.jumbotron {
+		min-height: 400px;
+		background-size: 100% 500px;
+	}
+	.novel-options-block {
+	margin-top: 10em;
+	color: white;
+	font-size: 1.2em;
+	text-shadow: 1px 1px rgba(200, 200, 200, 0.83);
+	text-decoration: none;
+	}
+}
+.navbar {
+	/*position: fixed;*/
+	margin-bottom: 0;
+}
+h1.novel-title {
+	color: #fff;
+}
+.chapter-info-list {
+	list-style-type: none;
+	margin-left: -40px;
+}
+.upvote {
+	float:left;
+}
+.current-chapter-details {
+	margin-left: 5em;
+}
+#read-novel_title {
+    text-decoration: underline;
+    margin: 0 auto;
+}
+.upvote-button {
+    outline: 0;
+    background: none;
+    border: 0;
+}
