@@ -2,6 +2,7 @@ source 'http://www.rubygems.org'
 
 gem 'sinatra'
 gem 'pry'
-gem 'active_record'
+gem 'activerecord'
+gem 'bcrypt'
 gem 'mustache'
 gem 'pg'
